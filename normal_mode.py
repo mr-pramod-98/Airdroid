@@ -1,59 +1,147 @@
-import server
+from threading import *
 
-class Mode:
-        global conn
-        global adderss
-        global option
-        global obj
+# "CONNECTED" IS USED TO CHECK IF CLIENT IS CONNECTED OR NOT
+global CONNECTED
+CONNECTED = True
 
-        obj = server.networking()
+global conn,address
+global message_in,replay
+global option
+global obj
 
-        def __init__(self,opt):
-                global option
+
+class Mode():
+
+        # INNITIALIZING "option" and "conn"
+        def __init__(self, opt,conn_obj,socket):
+                global option,conn,s
+                s = socket
+                conn = conn_obj
                 option = opt
 
-        # CREATING CONNECTION BETWEEN SERVER AND CLIENT
-        def start(self):
 
-                # CREATING THE SOCKET
-                obj.create_socket()
+        '''========================================= START OF NORMAL MODE ==========================================='''
 
-                # BINDING PORT AND PUTTING PORT TO LISTEN MODE
-                obj.bind_socket()
+        # STARTING NORMAL MODE
+        def NormalStart(self):
+                global conn,address
+                global s
+                global replay,msg
+                global option
 
-                # ESTABLISHING CONNECTION WITH THE CLIENT
-                conn,adderss = obj.socket_accept()
+
+                '''========================================== THREAD SEND ==========================================='''
+
+                # DEFINATION OF CLASS "send"
+                class send(Thread):
+
+                        def run(self):
+
+                                try:
+                                        def sending():
+                                                while True:
+
+                                                        # INNITIALLY "CONNECTED" IS TRUE
+                                                        global CONNECTED
+                                                        global conn
+
+                                                        msg = input(">>>")
+
+                                                        # CHEACKING IF CLIENT IS CONNECTED TO SERVER OR NOT
+                                                        if CONNECTED == True:
+
+                                                                # CLOSES THE CONNECTION IF IN PUT IS "exit"
+                                                                if msg == "exit":
+                                                                        print("SUCCESSFULLY DIS-CONNECTED")
+                                                                        conn.send(msg.encode())
+                                                                        conn.close()
+                                                                        CONNECTED = False
+
+                                                                # SENDING AND RECVING MESSAGES
+                                                                else:
+                                                                        msg = msg.encode()
+                                                                        conn.send(msg)
+
+                                                        # BREAK OUT OF LOOP IF NOT CONNECTED TO SERVER
+                                                        if not CONNECTED:
+                                                                break
+                                except:
+                                        if CONNECTED:
+                                                sending()
+
+                                # CALL "sending" FUNCTION ONLY IF CONNECTED TO SERVER
+                                if CONNECTED:
+                                        sending()
+
+
+                # CREATING OBJECT FOR CLASS "send"
+                reply = send()
+
+
+                '''========================================= THREAD RECIVE =========================================='''
+
+                # DEFINATION OF CLASS "recive"
+                class recive(Thread):
+
+                        def run(self):
+
+                                try:
+                                        def reciving():
+                                                while True:
+
+                                                        # INNITIALLY "CONNECTED" IS TRUE
+                                                        global CONNECTED
+                                                        global conn
+                                                        # RECIVES MESSAGES FROM SERVER ONLY IF CONNECTED
+                                                        if CONNECTED:
+                                                                try:
+                                                                        response = conn.recv(2048)
+
+                                                                        # CLOSES THE CONNECTION IF RESPONSE IS "exit"
+                                                                        if response.decode() == "exit":
+                                                                                print("client exiting")
+                                                                                conn.close()
+                                                                                CONNECTED = False
+                                                                        else:
+                                                                                print(response.decode())
+                                                                except:
+                                                                        pass
+
+                                                        # BREAK OUT OF LOOP IF NOT CONNECTED TO SERVER
+                                                        if not CONNECTED:
+                                                                break
+
+                                except:
+                                        if CONNECTED:
+                                                reciving()
+
+                                # CALL "reciving" FUNCTION ONLY IF CONNECTED TO SERVER
+                                if CONNECTED:
+                                        reciving()
+
+
+                # CREATING OBJECT FOR CLASS "recive"
+                message_in = recive()
+
+
+                '''======================================== SENDING MESSAGES ========================================'''
 
                 # SENDING MESSAGES TO CLIENTS
-                send_messages(option,conn)
+                def send_messages(option):
+
+                        # SETTING INITIAL LOOK AND INITIAL CONDITION
+                        print("operating in NORMAL MODE")
+                        conn.send(option.encode())
+
+                        # INITIATING THREAD RECIVE
+                        message_in.start()
+
+                        # INITIATING THREAD SEND
+                        reply.run()
+
+                        message_in.join()
+                        reply.join
 
 
-def send_messages(option,conn):
-
-        # SETTING INITIAL LOOK AND INITIAL CONDITION
-        print("operating in NORMAL MODE")
-        conn.send(option.encode())
-
-        while True:
-
-                msg = input(">>>")
-
-                # CLOSES THE CONNECTION IF IN PUT IS "exit"
-                if msg == "exit":
-                        print("SUCCESSFULLY DIS-CONNECTED")
-                        conn.send(msg.encode())
-                        conn.close()
-                        break
-
-                # SENDING AND RECVING MESSAGES
-                msg = msg.encode()
-                conn.send(msg)
-                response = conn.recv(2048)
-
-                # CLOSES THE CONNECTION IF RESPONSE IS "exit"
-                if response.decode() == "exit":
-                        print("client exiting")
-                        conn.close()
-                        break
-                else:
-                        print(response.decode())
+                # INITIATING "send_message" FUNCTION
+                send_messages(option)
