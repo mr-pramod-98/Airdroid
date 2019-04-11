@@ -5,12 +5,12 @@ from threading import *
 
 
 # "CONNECTED" IS USED TO CHECK IF CLIENT IS CONNECTED OR NOT
-global CONNECTED, FIRST
+global NAME
 FIRST = True
 CONNECTED = True
 
 
-'''========================================= THREAD SEND FOR NORMAL MODE ============================================'''
+'''======================================== THREAD RECIVE FOR NORMAL MODE ==========================================='''
 
 # DEFINATION OF CLASS "recive"
 class recive(Thread):
@@ -35,8 +35,7 @@ class recive(Thread):
                                                         print("host exited")
                                                         CONNECTED = False
                                                 else:
-                                                        if CONNECTED:
-                                                                print(msg.decode())
+                                                        print(msg.decode())
 
                                         # BREAK OUT OF LOOP IF NOT CONNECTED TO SERVER
                                         if not CONNECTED:
@@ -68,7 +67,7 @@ class send(Thread):
                                         # INNITIALLY "CONNECTED" IS TRUE
                                         global CONNECTED
 
-                                        reply = input(">>>")
+                                        reply = input()
 
                                         # CHEACKING IF CLIENT IS CONNECTED TO SERVER OR NOT
                                         if CONNECTED:
@@ -79,6 +78,7 @@ class send(Thread):
                                                         s.send(reply.encode())
                                                         CONNECTED = False
                                                 else:
+                                                        reply = NAME + ">> " + reply
                                                         s.send(reply.encode())
 
                                         # BREAK OUT OF LOOP IF NOT CONNECTED TO SERVER
@@ -100,7 +100,12 @@ message_out = send()
 
 # CLIENT WORKING IN NORMAL MODE
 def normal_mode():
-        print("operating in NORMAL MODE")
+
+        global NAME
+        NAME = input("Enter your name : ")
+        NAME = NAME.upper()
+
+        print("\n============================================ OPERATING IN NORMAL MODE ==========================================\n")
 
         # INITIATING "recive" THREAD
         message_in.start()
@@ -144,6 +149,7 @@ def advanced_mode():
 
 # STARTING CONNECTION WITH THE CLIENT
 if FIRST:
+
         def start_connection():
 
                 try:
