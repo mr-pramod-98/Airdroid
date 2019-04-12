@@ -1,21 +1,19 @@
 from threading import *
 
 # "CONNECTED" IS USED TO CHECK IF CLIENT IS CONNECTED OR NOT
-global CONNECTED
+global CONNECTED, NAME
 CONNECTED = True
 
 global conn,address
-global message_in,replay
 global option
-global obj
 
 
 class Mode():
 
         # INNITIALIZING "option" and "conn"
-        def __init__(self, opt,conn_obj,socket):
-                global option,conn,s
-                s = socket
+        def __init__(self, opt, conn_obj):
+
+                global option,conn
                 conn = conn_obj
                 option = opt
 
@@ -23,10 +21,8 @@ class Mode():
         '''========================================= START OF NORMAL MODE ==========================================='''
 
         # STARTING NORMAL MODE
-        def NormalStart(self):
+        def NormalStart(self,NAME):
                 global conn,address
-                global s
-                global replay,msg
                 global option
 
 
@@ -45,7 +41,7 @@ class Mode():
                                                         global CONNECTED
                                                         global conn
 
-                                                        msg = input(">>>")
+                                                        msg = input()
 
                                                         # CHEACKING IF CLIENT IS CONNECTED TO SERVER OR NOT
                                                         if CONNECTED == True:
@@ -59,8 +55,8 @@ class Mode():
 
                                                                 # SENDING AND RECVING MESSAGES
                                                                 else:
-                                                                        msg = msg.encode()
-                                                                        conn.send(msg)
+                                                                        msg = NAME + ">> " + msg
+                                                                        conn.send(msg.encode())
 
                                                         # BREAK OUT OF LOOP IF NOT CONNECTED TO SERVER
                                                         if not CONNECTED:
@@ -75,7 +71,7 @@ class Mode():
 
 
                 # CREATING OBJECT FOR CLASS "send"
-                reply = send()
+                message_out = send()
 
 
                 '''========================================= THREAD RECIVE =========================================='''
@@ -130,17 +126,17 @@ class Mode():
                 def send_messages(option):
 
                         # SETTING INITIAL LOOK AND INITIAL CONDITION
-                        print("operating in NORMAL MODE")
+                        print("\n============================================ OPERATING IN NORMAL MODE ==========================================\n")
                         conn.send(option.encode())
 
                         # INITIATING THREAD RECIVE
                         message_in.start()
 
                         # INITIATING THREAD SEND
-                        reply.run()
+                        message_out.run()
 
                         message_in.join()
-                        reply.join
+                        message_out.join
 
 
                 # INITIATING "send_message" FUNCTION
