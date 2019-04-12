@@ -4,17 +4,17 @@ class networking:
 
         # CREATING THE SOCKET
         def create_socket(self):
-               try:
+                try:
                         global s
-
-                        # "host" IS THE IP ADDRESS OF HOST COMPUTER
-                        global host
+                        global host     # "host" IS THE IP ADDRESS OF HOST COMPUTER
                         global port
+
                         host = ""
                         port = 9999
+
                         s = socket.socket()
 
-               except socket.error as msg:
+                except socket.error as msg:
                         print("socket creation error:",str(msg))
                         print("cound not create a socket")
 
@@ -25,6 +25,7 @@ class networking:
                         global host
                         global port
                         global s
+                
                         print("binding the port:"+ str(port))
                         s.bind((host,port))
                         s.listen(1)
@@ -35,11 +36,20 @@ class networking:
 
 
         # ESTABLISHING CONNECTION WITH THE CLIENTS
-        def socket_accept(self):
-                global conn
-                global address
-                conn,address = s.accept()
-                print("connection has been established!!!!")
-                print("IP: ",str(address[0]))
-                print("port: ",str(address[1]))
-                return conn,address
+        def socket_accept(self, n):
+
+                all_connection = [ ]
+                global s
+
+                if n == 1:
+                        conn, address = s.accept()
+                        return conn
+
+                else:
+                        # CREATING "n" CONNECTION
+                        for i in range(n):
+                                conn, address = s.accept()
+                                print("client-", i, " ", conn)
+                                all_connection.append(conn)
+                        print("connection established!!!!")
+                        return all_connection
