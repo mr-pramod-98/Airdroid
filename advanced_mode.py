@@ -1,39 +1,29 @@
-import server
 import sys
 
 class Mode:
 
         global conn
-        global adderss
         global option
-        global obj
 
-        obj = server.networking()
+        def __init__(self, opt, conn_obj):
 
-        def __init__(self,opt):
-                global option
+                global conn, option
+                conn = conn_obj
                 option = opt
 
         # CREATING CONNECTION BETWEEN SERVER AND CLIENT
         def start(self):
 
-                # CREATING THE SOCKET
-                obj.create_socket()
-
-                # BINDING PORT AND PUTTING PORT TO LISTEN MODE
-                obj.bind_socket()
-
-                # ESTABLISHING CONNECTION WITH THE CLIENT
-                conn,adderss = obj.socket_accept()
-
                 # SENDING COMMANDS TO CLIENTS
-                send_command(option,conn)
+                send_command(conn)
 
 
-def send_command(option,conn):
+'''================================================ SENDING COMMANDS ================================================'''
+
+def send_command(conn):
 
         # SETTING INITIAL LOOK AND INITIAL CONDITION
-        print("operating in ADVANCED MODE: \n >>>")
+        print("\n============================================ OPERATING IN ADVANCE MODE ==========================================\n")
         conn.send(option.encode())
         response = conn.recv(1024)
         print(response.decode(), end="")
@@ -52,9 +42,4 @@ def send_command(option,conn):
                 if len(str.encode(cmd)) > 0:
                         conn.send(str.encode(cmd))
                         client_response = str(conn.recv(2048), "utf-8")
-
-                # CLOSES THE CONNECTION IF RESPONSE IS "exit"
-                if client_response == "exit":
-                        print("client exiting")
-
-                print(client_response,end="")
+                        print(client_response, end="")
