@@ -1,4 +1,4 @@
-import Server
+import server
 import normal_mode
 import advanced_mode
 import group_mode
@@ -45,14 +45,14 @@ class main():
                 elif opt == '2':
                         m.start(n)
                         advanced = advanced_mode.Mode(opt,conn)
-                        advanced.start()
+                        advanced.AdvanceStart()
 
                 # INITIATING GROUP MODE
                 elif opt == '3':
                         n = int(input("Enter number of connections: "))
                         m.start(n)
                         group = group_mode.Mode(n, opt, conn)
-                        group.start()
+                        group.GroupStart()
 
 
                 else:
