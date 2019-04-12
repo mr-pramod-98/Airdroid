@@ -1,16 +1,16 @@
-import server
+import Server
 import normal_mode
 import advanced_mode
+import group_mode
 
 class main():
-        conn = ""
-        s = ""
+        conn = " "
 
         # CREATING CONNECTION BETWEEN SERVER AND CLIENT
-        def start(self):
+        def start(self,n):
 
-                global conn,s
-                s = obj = server.networking()
+                global conn
+                obj = Server.networking()
 
                 # CREATING THE SOCKET
                 obj.create_socket()
@@ -19,32 +19,48 @@ class main():
                 obj.bind_socket()
 
                 # ESTABLISHING CONNECTION WITH THE CLIENT
-                conn, adderss = obj.socket_accept()
+                conn = obj.socket_accept(n)
 
 
-        # EXECUTION STRARTS FROM HEAR - main()
+        '''============================= EXECUTION STRARTS FROM HEAR - StartMain()==================================='''
+
         def StartMain(self):
 
                 global conn
-                opt = input("Menu:\n1.normal mode(chatting)\n2.advanved mode\n")
+
+                # "n" INDICATES NUMBER OF CLIENTS TO BE CREATED( "BY DEFAULT IT SHOULD BE 1" )
+                n = 1
+                opt = input("Menu:\n1.normal mode(chatting)\n2.advanved mode\n3.group mmode\n")
 
                 # INITIATING NORMAL MODE
                 if opt == '1':
-                        m.start()
-                        normal = normal_mode.Mode(opt,conn,s)
-                        normal.NormalStart()
+
+                        NAME = input("Enter your name : ")
+                        NAME = NAME.upper()
+                        m.start(n)
+                        normal = normal_mode.Mode(opt, conn)
+                        normal.NormalStart(NAME)
 
                 # INITIATING ADVANCED MODE
                 elif opt == '2':
-                        m.start()
+                        m.start(n)
                         advanced = advanced_mode.Mode(opt,conn)
                         advanced.start()
+
+                # INITIATING GROUP MODE
+                elif opt == '3':
+                        n = int(input("Enter number of connections: "))
+                        m.start(n)
+                        group = group_mode.Mode(n, opt, conn)
+                        group.start()
+
 
                 else:
                         print("invalid choice")
 
-'''================================================== STARTING MAIN ======================================================='''
-                        
+
+'''=================== EXECUTES ONLY IF "main.py" IS EXECUTED AS THE FIRST FILE TO BE EXECUTED ======================'''
+
 if __name__ == "__main__":
 
         # CREATING OBJECT OF CLASS "main"
