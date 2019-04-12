@@ -12,7 +12,7 @@ class Mode:
                 option = opt
 
         # CREATING CONNECTION BETWEEN SERVER AND CLIENT
-        def start(self):
+        def AdvanceStart(self):
 
                 # SENDING COMMANDS TO CLIENTS
                 send_command(conn)
