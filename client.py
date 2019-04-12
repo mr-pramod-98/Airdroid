@@ -3,10 +3,13 @@ import os
 import subprocess
 from threading import *
 
+# "NAME" IS USED AS THE REFERENCE NAME FOR CLIENT
+global NAME
+
+# "FIRST" IS USED TO MAKE SURE THAT THIS FILE IS EXECUTED ONLY ONCE
+FIRST = True
 
 # "CONNECTED" IS USED TO CHECK IF CLIENT IS CONNECTED OR NOT
-global NAME
-FIRST = True
 CONNECTED = True
 
 
@@ -113,8 +116,33 @@ def normal_mode():
         # INITIATING "send" THREAD
         message_out.start()
 
+        # join IS USED TO MAKE SURE THAT "main Thread" DOES NOT EXIT UNTIL "sub-Thread" ARE DONE WITH THEIR WORK
         message_in.join()
         message_out.join()
+
+
+'''============================================= GROUP MODE ========================================================'''
+
+# CLIENTS WORKING IN GROUP MODE
+def group_mode():
+
+        global NAME
+        NAME = input("Enter your name : ")
+        NAME = NAME.upper()
+
+        print("\n============================================ OPERATING IN GROUP MODE ==========================================\n")
+
+        # INITIATING "recive" THREAD
+        message_in.start()
+
+        # INITIATING "send" THREAD
+        message_out.start()
+
+        # join IS USED TO MAKE SURE THAT "main Thread" DOES NOT EXIT UNTIL "sub-Thread" ARE DONE WITH THEIR WORK
+        message_in.join()
+        message_out.join()
+
+
 
 '''============================================= ADVANCE MODE ========================================================'''
 
@@ -145,9 +173,8 @@ def advanced_mode():
                         print(output_str)
 
 
-'''================================================= STARTING CLIENT ================================================'''
+'''===================================== STARTING CONNECTION WITH THE SERVER ========================================'''
 
-# STARTING CONNECTION WITH THE CLIENT
 if FIRST:
 
         def start_connection():
@@ -173,6 +200,10 @@ if FIRST:
                 # IF "opt" IS "2" INITIATE "advanced mode"
                 if opt == '2':
                         advanced_mode()
+
+                # IF "opt" IS "3" INITIATE "group mode"
+                if opt == '3':
+                        group_mode()
 
 if FIRST:
         # INITIATING CONNECTION
