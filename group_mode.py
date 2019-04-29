@@ -52,18 +52,17 @@ class Mode():
                                                         if len(all_connections) > 0:
                                                                 try:
                                                                         # COLLECTING THE RESPONSE OF 'i'th OBJECT IN THE LIST "all_connections"
-                                                                        print(all_connections[i])
                                                                         response = all_connections[i].recv(2048)
 
                                                                         # CLOSES THE CONNECTION IF RESPONSE IS "exit"
-                                                                        if response.decode() == "exit":
+                                                                        if 'exit' in response.decode() and '>>' not in response.decode():
                                                                                 all_connections[i].close()
                                                                                 all_connections.remove(all_connections[i])
 
                                                                                 # INTIMATING TO OTHER CONNECTED CLIENT THAT "all_connectios[i]" AS LEFT THE CONVERSATION
+                                                                                response = response.decode() + "ed" + " Clients left - " + str(len(all_connections))
                                                                                 for c in all_connections:
-                                                                                        msg = "one of the client exited"
-                                                                                        c.send(msg.encode())
+                                                                                        c.send(response.encode())
 
                                                                         else:
                                                                                 response = response.decode()
@@ -104,7 +103,8 @@ class Mode():
                 def send_messages():
 
                         # SETTING INITIAL LOOK AND INITIAL CONDITION
-                        print("\n============================================ OPERATING IN GROUP MODE ==========================================\n")
+                        print("\n============================================ OPERATING IN GROUP MODE ==========================================")
+                        print("                         ************************ READY TO USE ************************                        \n")
 
                         for c in all_connections:
                                 c.send(option.encode())
