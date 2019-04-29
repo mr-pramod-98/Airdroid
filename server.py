@@ -9,11 +9,11 @@ class networking:
                         global host     # "host" IS THE IP ADDRESS OF HOST COMPUTER
                         global port
 
-                        host = ""
+                        host = socket.gethostname()
                         port = 9999
 
                         s = socket.socket()
-
+                        print("HOST :", host)
                 except socket.error as msg:
                         print("socket creation error:",str(msg))
                         print("cound not create a socket")
