@@ -94,8 +94,8 @@ class Mode():
                                                                         response = conn.recv(2048)
 
                                                                         # CLOSES THE CONNECTION IF RESPONSE IS "exit"
-                                                                        if response.decode() == "exit":
-                                                                                print("client exiting")
+                                                                        if "exit" in response.decode() and '>>' not in response.decode():
+                                                                                print(response.decode())
                                                                                 conn.close()
                                                                                 CONNECTED = False
                                                                         else:
@@ -126,7 +126,9 @@ class Mode():
                 def send_messages(option):
 
                         # SETTING INITIAL LOOK AND INITIAL CONDITION
-                        print("\n============================================ OPERATING IN NORMAL MODE ==========================================\n")
+                        print("\n============================================ OPERATING IN NORMAL MODE ==========================================")
+                        print("                         ************************ READY TO USE ************************                         \n")
+
                         conn.send(option.encode())
 
                         # INITIATING THREAD RECIVE
