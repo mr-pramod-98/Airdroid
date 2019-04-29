@@ -23,7 +23,9 @@ class Mode:
 def send_command(conn):
 
         # SETTING INITIAL LOOK AND INITIAL CONDITION
-        print("\n============================================ OPERATING IN ADVANCE MODE ==========================================\n")
+        print("\n============================================ OPERATING IN ADVANCE MODE ==========================================")
+        print("                          ************************ READY TO USE ************************                         \n")
+
         conn.send(option.encode())
         response = conn.recv(1024)
         print(response.decode(), end="")
