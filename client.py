@@ -12,8 +12,8 @@ FIRST = True
 # "CONNECTED" IS USED TO CHECK IF CLIENT IS CONNECTED OR NOT
 CONNECTED = True
 
-
 '''======================================== THREAD RECIVE FOR NORMAL MODE ==========================================='''
+
 
 # DEFINATION OF CLASS "recive"
 class recive(Thread):
@@ -31,21 +31,26 @@ class recive(Thread):
 
                                         # RECIVES MESSAGES FROM SERVER ONLY IF CONNECTED
                                         if CONNECTED:
-                                                msg = s.recv(1024)
 
-                                                # CLOSES THE CONNECTION IF "msg" IS "exit"
-                                                if msg.decode() == "exit":
-                                                        print("host exited")
-                                                        CONNECTED = False
-                                                else:
-                                                        print(msg.decode())
+                                                try:
+                                                        msg = s.recv(1024)
+
+                                                        # CLOSES THE CONNECTION IF "msg" IS "exit"
+                                                        if msg.decode() == "exit":
+                                                                print("host exited")
+                                                                CONNECTED = False
+                                                        else:
+                                                                print(msg.decode())
+
+                                                except:
+                                                        pass
 
                                         # BREAK OUT OF LOOP IF NOT CONNECTED TO SERVER
                                         if not CONNECTED:
-                                             break
+                                                break
                 except:
-                        if CONNECTED:
-                                reciving()
+                    if CONNECTED:
+                        reciving()
 
                 # CALL "reciving" FUNCTION ONLY IF CONNECTED TO SERVER
                 if CONNECTED:
@@ -55,8 +60,8 @@ class recive(Thread):
 # CREATING OBJECT FOR CLASS "recive"
 message_in = recive()
 
-
 '''========================================= THREAD SEND FOR NORMAL MODE ============================================'''
+
 
 # DEFINATION OF CLASS "send"
 class send(Thread):
@@ -75,40 +80,46 @@ class send(Thread):
                                         # CHEACKING IF CLIENT IS CONNECTED TO SERVER OR NOT
                                         if CONNECTED:
 
-                                                # CLOSES THE CONNECTION IF "replay" IS "exit"
-                                                if reply == "exit":
-                                                        print("SUCCESSFULLY DIS-CONNECTED")
-                                                        s.send(reply.encode())
-                                                        CONNECTED = False
-                                                else:
-                                                        reply = NAME + ">> " + reply
-                                                        s.send(reply.encode())
+                                                try:
+                                                        # CLOSES THE CONNECTION IF "replay" IS "exit"
+                                                        if reply == "exit":
+                                                                print("SUCCESSFULLY DIS-CONNECTED")
+                                                                reply = NAME + " " + reply
+                                                                s.send(reply.encode())
+                                                                CONNECTED = False
+                                                        else:
+                                                                reply = NAME + ">> " + reply
+                                                                s.send(reply.encode())
+
+                                                except:
+                                                        pass
 
                                         # BREAK OUT OF LOOP IF NOT CONNECTED TO SERVER
                                         if not CONNECTED:
-                                            break
+                                                break
                 except:
-                        if CONNECTED:
-                            sending()
+                    if CONNECTED:
+                        sending()
 
                 # CALL "sending" FUNCTION ONLY IF CONNECTED TO SERVER
                 if CONNECTED:
-                        sending()
+                    sending()
+
 
 # CREATING OBJECT FOR CLASS "send"
 message_out = send()
 
-
 '''============================================= NORMAL MODE ========================================================'''
+
 
 # CLIENT WORKING IN NORMAL MODE
 def normal_mode():
-
         global NAME
         NAME = input("Enter your name : ")
         NAME = NAME.upper()
 
         print("\n============================================ OPERATING IN NORMAL MODE ==========================================\n")
+        print("                          ************************ READY TO USE ***********************                        \n")
 
         # INITIATING "recive" THREAD
         message_in.start()
@@ -123,14 +134,15 @@ def normal_mode():
 
 '''============================================= GROUP MODE ========================================================'''
 
+
 # CLIENTS WORKING IN GROUP MODE
 def group_mode():
-
         global NAME
         NAME = input("Enter your name : ")
         NAME = NAME.upper()
 
-        print("\n============================================ OPERATING IN GROUP MODE ==========================================\n")
+        print("\n============================================ OPERATING IN GROUP MODE ==========================================")
+        print("                          ************************ READY TO USE ***********************                        \n")
 
         # INITIATING "recive" THREAD
         message_in.start()
@@ -143,13 +155,14 @@ def group_mode():
         message_out.join()
 
 
-
 '''============================================= ADVANCE MODE ========================================================'''
+
 
 # CLIENT WORKING IN ADVANCED MODE
 def advanced_mode():
+        print("\n=========================================== OPERATING IN ADVANCE MODE =========================================")
+        print("                          ************************ READY TO USE ***********************                        \n")
 
-        print("operating in ADVANCED MODE")
         current_WorkingDir = os.getcwd() + ">"
         s.send(str.encode(current_WorkingDir))
 
@@ -182,7 +195,7 @@ if FIRST:
                 try:
                         global s
                         s = socket.socket()
-                        host = "192.168.43.23"
+                        host = input("Enter host name : ")
                         port = 9999
 
                         s.connect((host, port))
@@ -199,13 +212,14 @@ if FIRST:
 
                 # IF "opt" IS "2" INITIATE "advanced mode"
                 if opt == '2':
-                        advanced_mode()
+                        group_mode()
 
                 # IF "opt" IS "3" INITIATE "group mode"
                 if opt == '3':
-                        group_mode()
+                        advanced_mode()
 
 if FIRST:
         # INITIATING CONNECTION
         FIRST = False
         start_connection()
+        
