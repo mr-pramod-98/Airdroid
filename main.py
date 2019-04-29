@@ -10,7 +10,7 @@ class main():
         def start(self,n):
 
                 global conn
-                obj = Server.networking()
+                obj = server.networking()
 
                 # CREATING THE SOCKET
                 obj.create_socket()
@@ -30,7 +30,7 @@ class main():
 
                 # "n" INDICATES NUMBER OF CLIENTS TO BE CREATED( "BY DEFAULT IT SHOULD BE 1" )
                 n = 1
-                opt = input("Menu:\n1.normal mode(chatting)\n2.advanved mode\n3.group mmode\n")
+                opt = input("Menu:\n1.private chat\n2.group chat\n3.advance\n")
 
                 # INITIATING NORMAL MODE
                 if opt == '1':
@@ -41,19 +41,26 @@ class main():
                         normal = normal_mode.Mode(opt, conn)
                         normal.NormalStart(NAME)
 
-                # INITIATING ADVANCED MODE
-                elif opt == '2':
-                        m.start(n)
-                        advanced = advanced_mode.Mode(opt,conn)
-                        advanced.AdvanceStart()
-
                 # INITIATING GROUP MODE
-                elif opt == '3':
-                        n = int(input("Enter number of connections: "))
+                elif opt == '2':
+
+                        while True:
+
+                                n = int(input("Enter number of connections(minimum of 2 connections are requried to activate group chat ): "))
+                                if n >= 2:
+                                        break
+                                else:
+                                        print("minimum of two connections are requried")
                         m.start(n)
                         group = group_mode.Mode(n, opt, conn)
                         group.GroupStart()
 
+                # INITIATING ADVANCED MODE
+                elif opt == '3':
+
+                        m.start(n)
+                        advanced = advanced_mode.Mode(opt,conn)
+                        advanced.AdvanceStart()
 
                 else:
                         print("invalid choice")
