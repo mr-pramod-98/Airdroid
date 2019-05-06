@@ -1,7 +1,6 @@
 import server
-import normal_mode
-import advanced_mode
-import group_mode
+import FileShare
+import ShareZone
 
 class main():
         conn = " "
@@ -30,7 +29,7 @@ class main():
 
                 # "n" INDICATES NUMBER OF CLIENTS TO BE CREATED( "BY DEFAULT IT SHOULD BE 1" )
                 n = 1
-                opt = input("Menu:\n1.private chat\n2.group chat\n3.advance\n")
+                opt = input("Menu:\n1.FileShare\n2.ShareZone\n")
 
                 # INITIATING NORMAL MODE
                 if opt == '1':
@@ -54,13 +53,6 @@ class main():
                         m.start(n)
                         group = group_mode.Mode(n, opt, conn)
                         group.GroupStart()
-
-                # INITIATING ADVANCED MODE
-                elif opt == '3':
-
-                        m.start(n)
-                        advanced = advanced_mode.Mode(opt,conn)
-                        advanced.AdvanceStart()
 
                 else:
                         print("invalid choice")
