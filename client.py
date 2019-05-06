@@ -1,7 +1,6 @@
 import socket
-import os
-import subprocess
 from threading import *
+import file_transfer
 
 # "NAME" IS USED AS THE REFERENCE NAME FOR CLIENT
 global NAME
@@ -16,29 +15,36 @@ CONNECTED = True
 
 
 # DEFINATION OF CLASS "recive"
-class recive(Thread):
+class receive(Thread):
 
         def run(self):
 
                 try:
-                        def reciving():
+                        def receiving():
 
                                 # WHILE LOOP IS USED TO KEEP THE THREAD ALIVE UNTIL THE CONNECTION IS BROKEN
                                 while True:
 
-                                        # INNITIALLY "CONNECTED" IS TRUE
+                                        # INITIALLY "CONNECTED" IS TRUE
                                         global CONNECTED
 
-                                        # RECIVES MESSAGES FROM SERVER ONLY IF CONNECTED
+                                        # RECEIVES MESSAGES FROM SERVER ONLY IF CONNECTED
                                         if CONNECTED:
 
                                                 try:
                                                         msg = s.recv(1024)
 
                                                         # CLOSES THE CONNECTION IF "msg" IS "exit"
-                                                        if msg.decode() == "exit":
-                                                                print("host exited")
+                                                        if 'exit' in msg.decode() and '>>' not in msg.decode():
+                                                                print(msg.decode())
                                                                 CONNECTED = False
+
+                                                        elif "/FILE/" in msg.decode():
+                                                                path = msg.decode()
+                                                                path = path.replace("/FILE/", "")
+                                                                file_out = file_transfer.Receive(s, path)
+                                                                file_out.start()
+
                                                         else:
                                                                 print(msg.decode())
 
@@ -50,20 +56,20 @@ class recive(Thread):
                                                 break
                 except:
                     if CONNECTED:
-                        reciving()
+                        receiving()
 
                 # CALL "reciving" FUNCTION ONLY IF CONNECTED TO SERVER
                 if CONNECTED:
-                    reciving()
+                    receiving()
 
 
 # CREATING OBJECT FOR CLASS "recive"
-message_in = recive()
+message_in = receive()
 
 '''========================================= THREAD SEND FOR NORMAL MODE ============================================'''
 
 
-# DEFINATION OF CLASS "send"
+# DEFINITION OF CLASS "send"
 class send(Thread):
 
         def run(self):
@@ -72,12 +78,12 @@ class send(Thread):
                         def sending():
                                 while True:
 
-                                        # INNITIALLY "CONNECTED" IS TRUE
+                                        # INITIALLY "CONNECTED" IS TRUE
                                         global CONNECTED
 
                                         reply = input()
 
-                                        # CHEACKING IF CLIENT IS CONNECTED TO SERVER OR NOT
+                                        # CHECKING IF CLIENT IS CONNECTED TO SERVER OR NOT
                                         if CONNECTED:
 
                                                 try:
@@ -87,6 +93,14 @@ class send(Thread):
                                                                 reply = NAME + " " + reply
                                                                 s.send(reply.encode())
                                                                 CONNECTED = False
+
+                                                        elif "FILE >" in reply:
+                                                                path = reply.replace("FILE >", "")
+                                                                request = "/FILE/" + path
+                                                                s.send(request.encode())
+                                                                file_out = file_transfer.Send(s, path, NAME)
+                                                                file_out.start()
+
                                                         else:
                                                                 reply = NAME + ">> " + reply
                                                                 s.send(reply.encode())
@@ -113,7 +127,7 @@ message_out = send()
 
 
 # CLIENT WORKING IN NORMAL MODE
-def normal_mode():
+def FileShare():
         global NAME
         NAME = input("Enter your name : ")
         NAME = NAME.upper()
@@ -121,7 +135,7 @@ def normal_mode():
         print("\n============================================ OPERATING IN NORMAL MODE ==========================================\n")
         print("                          ************************ READY TO USE ***********************                        \n")
 
-        # INITIATING "recive" THREAD
+        # INITIATING "receive" THREAD
         message_in.start()
 
         # INITIATING "send" THREAD
@@ -136,15 +150,15 @@ def normal_mode():
 
 
 # CLIENTS WORKING IN GROUP MODE
-def group_mode():
+def ShareZone():
         global NAME
         NAME = input("Enter your name : ")
         NAME = NAME.upper()
 
-        print("\n============================================ OPERATING IN GROUP MODE ==========================================")
+        print("\n============================================ SHARE ZONE ==========================================")
         print("                          ************************ READY TO USE ***********************                        \n")
 
-        # INITIATING "recive" THREAD
+        # INITIATING "receive" THREAD
         message_in.start()
 
         # INITIATING "send" THREAD
@@ -153,37 +167,6 @@ def group_mode():
         # join IS USED TO MAKE SURE THAT "main Thread" DOES NOT EXIT UNTIL "sub-Thread" ARE DONE WITH THEIR WORK
         message_in.join()
         message_out.join()
-
-
-'''============================================= ADVANCE MODE ========================================================'''
-
-
-# CLIENT WORKING IN ADVANCED MODE
-def advanced_mode():
-        print("\n=========================================== OPERATING IN ADVANCE MODE =========================================")
-        print("                          ************************ READY TO USE ***********************                        \n")
-
-        current_WorkingDir = os.getcwd() + ">"
-        s.send(str.encode(current_WorkingDir))
-
-        while True:
-                data = s.recv(1024)
-
-                # CLOSES THE CONNECTION IF "data" IS "exit"
-                if data.decode() == "exit":
-                        print("host exited")
-                        break
-
-                if data[:2].decode("utf-8") == "cd":
-                        os.chdir(data[3:].decode("utf-8"))
-
-                if len(data) > 0:
-                        cmd = subprocess.Popen(data[:].decode("utf-8"), shell=True, stdout=subprocess.PIPE, stdin=subprocess.PIPE,stderr=subprocess.PIPE)
-                        output_byte = cmd.stdout.read() + cmd.stderr.read()
-                        output_str = str(output_byte, "utf-8")
-                        current_WorkingDir = os.getcwd() + ">"
-                        s.send(str.encode(output_str + current_WorkingDir))
-                        print(output_str)
 
 
 '''===================================== STARTING CONNECTION WITH THE SERVER ========================================'''
@@ -208,15 +191,11 @@ if FIRST:
 
                 # IF "opt" IS "1" INITIATE "normal mode"
                 if opt == '1':
-                        normal_mode()
+                        FileShare()
 
                 # IF "opt" IS "2" INITIATE "advanced mode"
                 if opt == '2':
-                        group_mode()
-
-                # IF "opt" IS "3" INITIATE "group mode"
-                if opt == '3':
-                        advanced_mode()
+                        ShareZone()
 
 if FIRST:
         # INITIATING CONNECTION
