@@ -6,7 +6,7 @@ class networking:
         def create_socket(self):
                 try:
                         global s
-                        global host     # "host" IS THE IP ADDRESS OF HOST COMPUTER
+                        global host     # "host" IS THE IP ADDRESS/SYSTEM NAME OF HOST COMPUTER
                         global port
 
                         host = socket.gethostname()
