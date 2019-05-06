@@ -1,4 +1,5 @@
 from threading import *
+import file_transfer
 
 # "CONNECTED" IS USED TO CHECK IF CLIENT IS CONNECTED OR NOT
 global CONNECTED, NAME
@@ -10,7 +11,7 @@ global option
 
 class Mode():
 
-        # INNITIALIZING "option" and "conn"
+        # INITIALIZING "option" and "conn"
         def __init__(self, opt, conn_obj):
 
                 global option,conn
@@ -28,7 +29,7 @@ class Mode():
 
                 '''========================================== THREAD SEND ==========================================='''
 
-                # DEFINATION OF CLASS "send"
+                # DEFINITION OF CLASS "send"
                 class send(Thread):
 
                         def run(self):
@@ -37,23 +38,34 @@ class Mode():
                                         def sending():
                                                 while True:
 
-                                                        # INNITIALLY "CONNECTED" IS TRUE
+                                                        # INITIALLY "CONNECTED" IS TRUE
                                                         global CONNECTED
                                                         global conn
 
                                                         msg = input()
 
-                                                        # CHEACKING IF CLIENT IS CONNECTED TO SERVER OR NOT
+                                                        # CHECKING IF CLIENT IS CONNECTED TO SERVER OR NOT
                                                         if CONNECTED == True:
 
                                                                 # CLOSES THE CONNECTION IF IN PUT IS "exit"
                                                                 if msg == "exit":
                                                                         print("SUCCESSFULLY DIS-CONNECTED")
+                                                                        msg = NAME + " " + msg
                                                                         conn.send(msg.encode())
                                                                         conn.close()
                                                                         CONNECTED = False
 
-                                                                # SENDING AND RECVING MESSAGES
+                                                                elif "FILE >" in msg:
+                                                                        path = msg.replace("FILE >", "")
+                                                                        request = "/FILE/" + path
+                                                                        conn.send(request.encode())
+                                                                        file_out = file_transfer.Send(conn, path, NAME)
+                                                                        file_out.start()
+
+                                                                elif "FILE EXIT" == msg:
+                                                                        conn.send(msg.encode())
+
+                                                                # SENDING AND RECEIVING MESSAGES
                                                                 else:
                                                                         msg = NAME + ">> " + msg
                                                                         conn.send(msg.encode())
@@ -74,21 +86,21 @@ class Mode():
                 message_out = send()
 
 
-                '''========================================= THREAD RECIVE =========================================='''
+                '''========================================= THREAD RECEIVE =========================================='''
 
-                # DEFINATION OF CLASS "recive"
-                class recive(Thread):
+                # DEFINATION OF CLASS "receive"
+                class receive(Thread):
 
                         def run(self):
 
                                 try:
-                                        def reciving():
+                                        def receiving():
                                                 while True:
 
-                                                        # INNITIALLY "CONNECTED" IS TRUE
+                                                        # INITIALLY "CONNECTED" IS TRUE
                                                         global CONNECTED
                                                         global conn
-                                                        # RECIVES MESSAGES FROM SERVER ONLY IF CONNECTED
+                                                        # RECEIVES MESSAGES FROM SERVER ONLY IF CONNECTED
                                                         if CONNECTED:
                                                                 try:
                                                                         response = conn.recv(2048)
@@ -98,6 +110,13 @@ class Mode():
                                                                                 print(response.decode())
                                                                                 conn.close()
                                                                                 CONNECTED = False
+
+                                                                        elif "/FILE/" in response.decode():
+                                                                                path = response.decode()
+                                                                                path = path.replace("/FILE/", "")
+                                                                                file_out = file_transfer.Receive(conn, path)
+                                                                                file_out.start()
+
                                                                         else:
                                                                                 print(response.decode())
                                                                 except:
@@ -109,15 +128,15 @@ class Mode():
 
                                 except:
                                         if CONNECTED:
-                                                reciving()
+                                                receiving()
 
                                 # CALL "reciving" FUNCTION ONLY IF CONNECTED TO SERVER
                                 if CONNECTED:
-                                        reciving()
+                                        receiving()
 
 
                 # CREATING OBJECT FOR CLASS "recive"
-                message_in = recive()
+                message_in = receive()
 
 
                 '''======================================== SENDING MESSAGES ========================================'''
@@ -131,7 +150,7 @@ class Mode():
 
                         conn.send(option.encode())
 
-                        # INITIATING THREAD RECIVE
+                        # INITIATING THREAD RECEIVE
                         message_in.start()
 
                         # INITIATING THREAD SEND
