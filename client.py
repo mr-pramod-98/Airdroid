@@ -1,9 +1,10 @@
 import socket
 from threading import *
-import file_transfer
+import File_Transfer
+
 
 # "NAME" IS USED AS THE REFERENCE NAME FOR CLIENT
-global NAME
+global NAME, opt
 
 # "FIRST" IS USED TO MAKE SURE THAT THIS FILE IS EXECUTED ONLY ONCE
 FIRST = True
@@ -42,7 +43,7 @@ class receive(Thread):
                                                         elif "/FILE/" in msg.decode():
                                                                 path = msg.decode()
                                                                 path = path.replace("/FILE/", "")
-                                                                file_out = file_transfer.Receive(s, path)
+                                                                file_out = File_Transfer.Receive(s, path)
                                                                 file_out.start()
 
                                                         else:
@@ -98,8 +99,10 @@ class send(Thread):
                                                                 path = reply.replace("FILE >", "")
                                                                 request = "/FILE/" + path
                                                                 s.send(request.encode())
-                                                                file_out = file_transfer.Send(s, path, NAME)
-                                                                file_out.start()
+
+                                                                if opt == '1':
+                                                                        file_out = File_Transfer.Send(s, path, NAME)
+                                                                        file_out.start()
 
                                                         else:
                                                                 reply = NAME + ">> " + reply
@@ -187,6 +190,7 @@ if FIRST:
                         start_connection()
 
                 # "opt"  CONTAINS THE MODE OF WORKING
+                global opt
                 opt = s.recv(1024).decode()
 
                 # IF "opt" IS "1" INITIATE "normal mode"
@@ -197,8 +201,6 @@ if FIRST:
                 if opt == '2':
                         ShareZone()
 
-if FIRST:
         # INITIATING CONNECTION
         FIRST = False
         start_connection()
-        
