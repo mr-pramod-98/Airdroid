@@ -1,20 +1,18 @@
 from threading import *
-import file_transfer
+import File_Transfer
+
 
 # "CONNECTED" IS USED TO CHECK IF CLIENT IS CONNECTED OR NOT
-global CONNECTED, NAME
 CONNECTED = True
-
-global conn,address
-global option
-
+conn = None
+option = None
 
 class Mode():
 
         # INITIALIZING "option" and "conn"
         def __init__(self, opt, conn_obj):
 
-                global option,conn
+                global option, conn
                 conn = conn_obj
                 option = opt
 
@@ -22,10 +20,9 @@ class Mode():
         '''========================================= START OF NORMAL MODE ==========================================='''
 
         # STARTING NORMAL MODE
-        def NormalStart(self,NAME):
-                global conn,address
-                global option
+        def NormalStart(self, NAME):
 
+                global conn, option
 
                 '''========================================== THREAD SEND ==========================================='''
 
@@ -36,6 +33,7 @@ class Mode():
 
                                 try:
                                         def sending():
+
                                                 while True:
 
                                                         # INITIALLY "CONNECTED" IS TRUE
@@ -55,15 +53,13 @@ class Mode():
                                                                         conn.close()
                                                                         CONNECTED = False
 
+                                                                # IF "FILE >" IN THE "msg" FILE TRANSFER IS INITIATED
                                                                 elif "FILE >" in msg:
                                                                         path = msg.replace("FILE >", "")
                                                                         request = "/FILE/" + path
                                                                         conn.send(request.encode())
-                                                                        file_out = file_transfer.Send(conn, path, NAME)
+                                                                        file_out = File_Transfer.Send(conn, path, NAME)
                                                                         file_out.start()
-
-                                                                elif "FILE EXIT" == msg:
-                                                                        conn.send(msg.encode())
 
                                                                 # SENDING AND RECEIVING MESSAGES
                                                                 else:
@@ -95,13 +91,15 @@ class Mode():
 
                                 try:
                                         def receiving():
+
                                                 while True:
 
                                                         # INITIALLY "CONNECTED" IS TRUE
-                                                        global CONNECTED
-                                                        global conn
+                                                        global CONNECTED, conn
+
                                                         # RECEIVES MESSAGES FROM SERVER ONLY IF CONNECTED
                                                         if CONNECTED:
+
                                                                 try:
                                                                         response = conn.recv(2048)
 
@@ -114,7 +112,7 @@ class Mode():
                                                                         elif "/FILE/" in response.decode():
                                                                                 path = response.decode()
                                                                                 path = path.replace("/FILE/", "")
-                                                                                file_out = file_transfer.Receive(conn, path)
+                                                                                file_out = File_Transfer.Receive(conn, path)
                                                                                 file_out.start()
 
                                                                         else:
@@ -157,7 +155,7 @@ class Mode():
                         message_out.run()
 
                         message_in.join()
-                        message_out.join
+                        message_out.join()
 
 
                 # INITIATING "send_message" FUNCTION
