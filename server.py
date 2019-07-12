@@ -4,6 +4,7 @@ class networking:
 
         # CREATING THE SOCKET
         def create_socket(self):
+
                 try:
                         global s
                         global host     # "host" IS THE IP ADDRESS/SYSTEM NAME OF HOST COMPUTER
@@ -14,31 +15,33 @@ class networking:
 
                         s = socket.socket()
                         print("HOST :", host)
+
                 except socket.error as msg:
-                        print("socket creation error:",str(msg))
+                        print("socket creation error:", str(msg))
                         print("cound not create a socket")
 
 
         # BINDING PORT AND PUTTING PORT TO LISTEN MODE
         def bind_socket(self):
+
                 try:
                         global host
                         global port
                         global s
                 
-                        print("binding the port:"+ str(port))
+                        print("binding the port:" + str(port))
                         s.bind((host,port))
                         s.listen(1)
 
                 except socket.error as msg:
-                        print("socket binding error:",str(msg),"\n retrying.....")
+                        print("socket binding error:", str(msg), "\n retrying.....")
                         self.bind_socket()
 
 
         # ESTABLISHING CONNECTION WITH THE CLIENTS
         def socket_accept(self, n):
 
-                all_connection = [ ]
+                all_connection = []
                 global s
 
                 if n == 1:
