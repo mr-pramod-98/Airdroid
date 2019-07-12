@@ -6,7 +6,7 @@ class main():
         conn = " "
 
         # CREATING CONNECTION BETWEEN SERVER AND CLIENT
-        def start(self,n):
+        def start(self, n):
 
                 global conn
                 obj = server.networking()
@@ -27,8 +27,6 @@ class main():
 
                 global conn
 
-                # "n" INDICATES NUMBER OF CLIENTS TO BE CREATED( "BY DEFAULT IT SHOULD BE 1" )
-                n = 1
                 opt = input("Menu:\n1.FileShare\n2.ShareZone\n")
 
                 # INITIATING NORMAL MODE
@@ -36,8 +34,8 @@ class main():
 
                         NAME = input("Enter your name : ")
                         NAME = NAME.upper()
-                        m.start(n)
-                        normal = normal_mode.Mode(opt, conn)
+                        m.start(1)
+                        normal = FileShare.Mode(opt, conn)
                         normal.NormalStart(NAME)
 
                 # INITIATING GROUP MODE
@@ -45,13 +43,14 @@ class main():
 
                         while True:
 
+                                # "n" INDICATES NUMBER OF CONNECTION
                                 n = int(input("Enter number of connections(minimum of 2 connections are requried to activate group chat ): "))
                                 if n >= 2:
                                         break
                                 else:
                                         print("minimum of two connections are requried")
                         m.start(n)
-                        group = group_mode.Mode(n, opt, conn)
+                        group = ShareZone.Mode(n, opt, conn)
                         group.GroupStart()
 
                 else:
