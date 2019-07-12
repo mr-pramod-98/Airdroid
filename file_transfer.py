@@ -1,5 +1,7 @@
 import os
 import subprocess
+
+
 class Send():
 
         # INITIALIZING "conn"
@@ -31,7 +33,7 @@ class Send():
                         except:
                                 print("file could not be transfered")
                                 print("pleas try again")
-                                conn_OR_socket.send(bytes("FILE EXIT".encode()))
+                                conn_OR_socket.send(bytes("TRANSFERED FILED".encode()))
 
         def start(self):
 
@@ -65,8 +67,15 @@ class Receive():
                         try:
                                 file = open(Path, 'wb')
                                 print("file opened at the path : ", Path)
+
                                 while True:
                                         data = conn_OR_socket.recv(1024)
+
+                                        if "TRANSFERED FILED" in str(data):
+                                                # WRITING "data" ON TO THE FILE
+                                                print("transfer failed")
+                                                file.close()
+                                                break
 
                                         if "FILE EXIT" not in str(data):
                                                 # WRITING "data" ON TO THE FILE
@@ -78,6 +87,7 @@ class Receive():
                                                 break
                         except:
                                 print("transfer failed")
+                                file.close()
 
         def start(self):
 
