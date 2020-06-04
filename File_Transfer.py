@@ -14,8 +14,9 @@ class Send:
 
         # GET THE LOCAL DISK FROM THE FILE PATH( eg: 'C' FROM 'C:\Users\DELL\Desktop\Notes\report.pdf')
         local_disk = Path.split(":")[0] + ":"
-        os.chdir(local_disk)
-        # print(os.getcwd())
+        print(local_disk)
+        os.chdir("C:")
+        print(os.getcwd(), Path)
 
         '''========================================== THREAD SEND ==========================================='''
 
@@ -26,16 +27,16 @@ class Send:
 
             try:
                 print(Path)
-                file = open(Path, 'rb')
+                with open(Path.lstrip('\u202a'), 'rb') as file:
 
-                # SENDING DATA OF THE FILE IN A LOOP
-                for data in file:
-                    # SENDING DATA TO RECEIVER
-                    conn_OR_socket.send(data)
+                    # SENDING DATA OF THE FILE IN A LOOP
+                    for data in file:
+                        # SENDING DATA TO RECEIVER
+                        conn_OR_socket.send(data)
 
-                conn_OR_socket.send(bytes("FILE EXIT".encode()))
-                print("file sent")
-                file.close()
+                    conn_OR_socket.send(bytes("FILE EXIT".encode()))
+                    print("file sent")
+                    # file.close()
 
             except Exception as e:
                 print(type(e).__name__, e)
@@ -75,28 +76,28 @@ class Receive:
         def run(self):
 
             try:
-                file = open(Path, 'wb')
-                print("file opened at the path : ", Path)
+                with open(Path.lstrip('\u202a'), 'wb') as file:
+                    print("file opened at the path : ", Path)
 
-                while True:
+                    while True:
 
-                    # RECEIVING DATA FORM SENDER
-                    data = conn_OR_socket.recv(1024)
+                        # RECEIVING DATA FORM SENDER
+                        data = conn_OR_socket.recv(1024)
 
-                    if "TRANSFER FILED" in str(data):
-                        print("transfer failed")
-                        file.close()
-                        break
+                        if "TRANSFER FILED" in str(data):
+                            print("transfer failed")
+                            # file.close()
+                            break
 
-                    if "FILE EXIT" not in str(data):
-                        # WRITING "data" ON TO THE FILE
-                        file.write(data)
+                        if "FILE EXIT" not in str(data):
+                            # WRITING "data" ON TO THE FILE
+                            file.write(data)
 
-                    else:
-                        # CLOSE THE FILE WHEN "FILE EXIT" MESSAGE IS RECEIVED
-                        print("file received")
-                        file.close()
-                        break
+                        else:
+                            # CLOSE THE FILE WHEN "FILE EXIT" MESSAGE IS RECEIVED
+                            print("file received")
+                            # file.close()
+                            break
 
             except Exception as e:
                 print(type(e).__name__, e)
