@@ -64,8 +64,11 @@ class Mode:
                                         msg = NAME + ">> " + msg
                                         conn.send(msg.encode())
 
-                                except:
-                                    pass
+                                # TERMINATE THE "Host" PROCESS WHEN THE CONNECTION GETS
+                                # FORCEFULLY CLOSED BY THE "Client"
+                                except ConnectionResetError as e:
+                                    print("Connection was terminated by the client")
+                                    CONNECTED = False
 
                             # BREAK OUT OF LOOP IF NOT CONNECTED TO SERVER
                             if not CONNECTED:

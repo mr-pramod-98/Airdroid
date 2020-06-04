@@ -109,8 +109,10 @@ class Send(Thread):
                                 reply = NAME + ">> " + reply
                                 s.send(reply.encode())
 
-                        except:
-                            pass
+                        # TERMINATE THE "Client" PROCESS WHEN THE CONNECTION GETS FORCEFULLY CLOSED BY THE "Host"
+                        except ConnectionResetError as e:
+                            print("Connection was terminated by the host")
+                            CONNECTED = False
 
                     # BREAK OUT OF LOOP IF NOT CONNECTED TO SERVER
                     if not CONNECTED:
