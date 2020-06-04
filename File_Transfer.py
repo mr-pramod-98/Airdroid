@@ -67,7 +67,7 @@ class Receive:
         subprocess.Popen("mkdir Airdroid", shell=True, stdout=subprocess.PIPE, stdin=subprocess.PIPE,
                          stderr=subprocess.PIPE)
 
-        '''========================================= THREAD RECEIVE =========================================='''
+        '''========================================= THREAD RECEIVE ========================================='''
 
     # DEFINITION OF CLASS "receive"
     class receive():
