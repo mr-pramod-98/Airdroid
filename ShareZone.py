@@ -17,8 +17,7 @@ option = None
 
 
 # DEFINITION OF CLASS "Mode".
-class Mode():
-
+class Mode:
 
     # INITIALIZING "n"(number of connections) and "all_connections".
     def __init__(self, num, opt, conn_obj):
@@ -33,7 +32,7 @@ class Mode():
     # STARTING GROUP MODE
     def GroupStart(self):
 
-        '''''========================================= THREAD COORDINATE ==========================================='''''
+        '''========================================= THREAD COORDINATE ==========================================='''
 
         # DEFINITION OF CLASS "receive"
         class Co_ordinate(Thread):
@@ -48,14 +47,12 @@ class Mode():
                     def receiving():
 
                         while True:
-
                             # INITIALLY "CONNECTED" IS TRUE
                             global all_connections, n
                             CONNECTED = True
 
                             # RECEIVES MESSAGES FROM SERVER ONLY IF CONNECTED
                             if CONNECTED:
-
                                 try:
                                     # COLLECTING THE RESPONSE OF 'i'th OBJECT IN THE LIST "all_connections"
                                     response = all_connections[i].recv(2048)
@@ -90,6 +87,7 @@ class Mode():
                                             # THE EXCEPTION OF SENDING MESSAGE TO A DIS-CONNECTED IS HANDLED BY THE try AND except BLOCK.
                                             if c == all_connections[i]:
                                                 continue
+
                                             try:
                                                 c.send(response.encode())
                                             except:
@@ -110,6 +108,7 @@ class Mode():
                                                     # THE EXCEPTION OF SENDING MESSAGE TO A DIS-CONNECTED IS HANDLED BY THE try AND except BLOCK.
                                                     if c == all_connections[i]:
                                                         continue
+
                                                     try:
                                                         c.send(data)
                                                     except:
@@ -121,6 +120,7 @@ class Mode():
                                                 # "all_connections[i]" IS SENDING THE FILE
                                                 if c == all_connections[i]:
                                                     continue
+
                                                 try:
                                                     c.send(bytes("FILE EXIT".encode()))
                                                 except:
@@ -143,6 +143,7 @@ class Mode():
                                                 # THE EXCEPTION OF SENDING MESSAGE TO A DIS-CONNECTED IS HANDLED BY THE try AND except BLOCK.
                                                 if c == all_connections[i]:
                                                     continue
+
                                                 try:
                                                     c.send(bytes("TRANSFERED FILED".encode()))
                                                     c.send(bytes("FILE EXIT".encode()))
@@ -158,6 +159,7 @@ class Mode():
                                             # THE EXCEPTION OF SENDING MESSAGE TO A DIS-CONNECTED IS HANDLED BY THE try AND except BLOCK.
                                             if c == all_connections[i]:
                                                 continue
+
                                             try:
                                                 c.send(response.encode())
                                             except:
@@ -193,8 +195,8 @@ class Mode():
         def send_messages():
 
             # SETTING INITIAL LOOK AND INITIAL CONDITION
-            print("\n============================================ OPERATING IN GROUP MODE ==========================================")
-            print("                         ************************ READY TO USE ************************                        \n")
+            print("\n=================================== OPERATING IN GROUP MODE ===================================\n")
+            print("                   *********************** READY TO USE ***********************                  \n")
 
             for c in all_connections:
                 c.send(option.encode())
