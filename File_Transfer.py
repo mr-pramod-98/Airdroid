@@ -12,6 +12,11 @@ class Send:
         Path = path
         SENDER_NAME = name
 
+        # GET THE LOCAL DISK FROM THE FILE PATH( eg: 'C' FROM 'C:\Users\DELL\Desktop\Notes\report.pdf')
+        local_disk = Path.split(":")[0] + ":"
+        os.chdir(local_disk)
+        # print(os.getcwd())
+
         '''========================================== THREAD SEND ==========================================='''
 
     # DEFINITION OF CLASS "send"
@@ -32,10 +37,11 @@ class Send:
                 print("file sent")
                 file.close()
 
-            except:
-                print("file could not be transfered")
+            except Exception as e:
+                print(type(e).__name__, e)
+                print("file could not be transferred")
                 print("pleas try again")
-                conn_OR_socket.send(bytes("TRANSFERED FILED".encode()))
+                conn_OR_socket.send(bytes("TRANSFER FILED".encode()))
 
     def start(self):
 
@@ -56,8 +62,8 @@ class Receive:
         Path = "C:\\Airdroid\\" + Path_list[-1]
 
         # CREATING DIRECTORY TO STORE THE RECEIVED FILE
-        os.chdir("/")
-        print(os.getcwd())
+        os.chdir("C:")
+        # print(os.getcwd(), Path)
         subprocess.Popen("mkdir Airdroid", shell=True, stdout=subprocess.PIPE, stdin=subprocess.PIPE,
                          stderr=subprocess.PIPE)
 
@@ -77,8 +83,7 @@ class Receive:
                     # RECEIVING DATA FORM SENDER
                     data = conn_OR_socket.recv(1024)
 
-                    if "TRANSFERED FILED" in str(data):
-                        # WRITING "data" ON TO THE FILE
+                    if "TRANSFER FILED" in str(data):
                         print("transfer failed")
                         file.close()
                         break
@@ -93,8 +98,8 @@ class Receive:
                         file.close()
                         break
 
-            except:
-                print("transfer failed")
+            except Exception as e:
+                print(type(e).__name__, e)
                 file.close()
 
     def start(self):
