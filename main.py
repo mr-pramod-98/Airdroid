@@ -10,7 +10,7 @@ class Main:
     @staticmethod
     def start(n):
 
-        obj = Server.networking()
+        obj = Server.Networking()
 
         # CREATING THE SOCKET
         obj.create_socket()

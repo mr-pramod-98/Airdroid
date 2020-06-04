@@ -1,56 +1,54 @@
 import socket
 
 
-class networking:
+class Networking:
+
+    _socket: socket.socket
+    host: str  # "host" IS THE IP ADDRESS/SYSTEM NAME OF HOST COMPUTER
+    port: int
 
     # CREATING THE SOCKET
-    def create_socket(self):
+    @staticmethod
+    def create_socket():
 
         try:
-            global s
-            global host  # "host" IS THE IP ADDRESS/SYSTEM NAME OF HOST COMPUTER
-            global port
+            Networking.host = socket.gethostname()
+            Networking.port = 9999
+            Networking._socket = socket.socket()
 
-            host = socket.gethostname()
-            port = 9999
-
-            s = socket.socket()
-            print("HOST :", host)
+            print("HOST :", Networking.host)
 
         except socket.error as msg:
             print("socket creation error:", str(msg))
             print("could not create a socket")
 
     # BINDING PORT AND PUTTING PORT TO LISTEN MODE
-    def bind_socket(self):
+    @staticmethod
+    def bind_socket():
 
         try:
-            global host
-            global port
-            global s
-
-            print("binding the port:" + str(port))
-            s.bind((host, port))
-            s.listen(1)
+            print("binding the port:", Networking.port)
+            Networking._socket.bind((Networking.host, Networking.port))
+            Networking._socket.listen(1)
 
         except socket.error as msg:
             print("socket binding error:", str(msg), "\n retrying.....")
-            self.bind_socket()
+            Networking.bind_socket()
 
     # ESTABLISHING CONNECTION WITH THE CLIENTS
-    def socket_accept(self, n):
+    @staticmethod
+    def socket_accept(n):
 
         all_connection = []
-        global s
 
         if n == 1:
-            conn, address = s.accept()
+            conn, address = Networking._socket.accept()
             return conn
 
         else:
             # CREATING "n" CONNECTION
             for i in range(n):
-                conn, address = s.accept()
+                conn, address = Networking._socket.accept()
                 print("client-", i, " ", conn)
                 all_connection.append(conn)
 
