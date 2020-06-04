@@ -20,7 +20,7 @@ class Mode:
     '''========================================= START OF NORMAL MODE ==========================================='''
 
     # STARTING NORMAL MODE
-    def NormalStart(self, NAME):
+    def normal_start(self, name):
 
         global conn, option
 
@@ -46,7 +46,7 @@ class Mode:
                                     # CLOSES THE CONNECTION IF IN PUT IS "exit"
                                     if msg == "exit":
                                         print("SUCCESSFULLY DIS-CONNECTED")
-                                        msg = NAME + " " + msg
+                                        msg = name + " " + msg
                                         conn.send(msg.encode())
                                         conn.close()
                                         CONNECTED = False
@@ -56,12 +56,12 @@ class Mode:
                                         path = msg.replace("FILE >", "")
                                         request = "/FILE/" + path
                                         conn.send(request.encode())
-                                        file_out = File_Transfer.Send(conn, path, NAME)
+                                        file_out = File_Transfer.Send(conn, path, name)
                                         file_out.start()
 
                                     # SENDING AND RECEIVING MESSAGES
                                     else:
-                                        msg = NAME + ">> " + msg
+                                        msg = name + ">> " + msg
                                         conn.send(msg.encode())
 
                                 # TERMINATE THE "Host" PROCESS WHEN THE CONNECTION GETS

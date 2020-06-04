@@ -1,6 +1,8 @@
 import os
 import subprocess
 
+global conn_OR_socket, Path, SENDER_NAME
+
 
 class Send:
 
@@ -20,10 +22,11 @@ class Send:
 
         '''========================================== THREAD SEND ==========================================='''
 
-    # DEFINITION OF CLASS "send"
-    class send:
+    # DEFINITION OF CLASS "Send"
+    class Send:
 
-        def run(self):
+        @staticmethod
+        def run():
 
             try:
                 print(Path)
@@ -44,11 +47,11 @@ class Send:
                 print("pleas try again")
                 conn_OR_socket.send(bytes("TRANSFER FILED".encode()))
 
-    def start(self):
+    @staticmethod
+    def start():
 
-        # CREATING OBJECT FOR CLASS "send"
-        file_out = Send.send()
-        file_out.run()
+        # EXECUTE "run" METHOD USING CLASS-NAME SINCE "run" IS A STATIC-METHOD
+        Send.Send.run()
 
 
 class Receive:
@@ -59,21 +62,22 @@ class Receive:
         conn_OR_socket = connection
 
         # PATH CREATION FOR THE RECEIVING FILE
-        Path_list = path.split("\\")
-        Path = "C:\\Airdroid\\" + Path_list[-1]
+        path_list = path.split("\\")
+        Path = "C:\\Airdroid\\" + path_list[-1]
 
         # CREATING DIRECTORY TO STORE THE RECEIVED FILE
         os.chdir("C:")
-        # print(os.getcwd(), Path)
+        print(os.getcwd(), Path)
         subprocess.Popen("mkdir Airdroid", shell=True, stdout=subprocess.PIPE, stdin=subprocess.PIPE,
                          stderr=subprocess.PIPE)
 
         '''========================================= THREAD RECEIVE ========================================='''
 
-    # DEFINITION OF CLASS "receive"
-    class receive():
+    # DEFINITION OF CLASS "Receive"
+    class Receive:
 
-        def run(self):
+        @staticmethod
+        def run():
 
             try:
                 with open(Path.lstrip('\u202a'), 'wb') as file:
@@ -103,8 +107,8 @@ class Receive:
                 print(type(e).__name__, e)
                 file.close()
 
-    def start(self):
+    @staticmethod
+    def start():
 
-        # CREATING OBJECT FOR CLASS "send"
-        file_in = Receive.receive()
-        file_in.run()
+        # EXECUTE "run" METHOD USING CLASS-NAME SINCE "run" IS A STATIC-METHOD
+        Receive.Receive.run()
