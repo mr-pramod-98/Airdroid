@@ -4,12 +4,12 @@ import ShareZone
 
 
 class Main:
-    conn = " "
+    conn: str
 
     # CREATING CONNECTION BETWEEN SERVER AND CLIENT
-    def start(self, n):
+    @staticmethod
+    def start(n):
 
-        global conn
         obj = Server.networking()
 
         # CREATING THE SOCKET
@@ -19,37 +19,36 @@ class Main:
         obj.bind_socket()
 
         # ESTABLISHING CONNECTION WITH THE CLIENT
-        conn = obj.socket_accept(n)
+        Main.conn = obj.socket_accept(n)
 
-    '''============================= EXECUTION STRARTS FROM HEAR - StartMain()==================================='''
+    '''============================= EXECUTION STARTS FROM HEAR - start_main()==================================='''
 
-    def StartMain(self):
+    @staticmethod
+    def start_main():
 
-        global conn
         opt = input("Menu:\n1.FileShare\n2.ShareZone\n")
 
         # INITIATING NORMAL MODE
         if opt == '1':
-            NAME = input("Enter your name : ")
-            NAME = NAME.upper()
-            m.start(1)
-            normal = FileShare.Mode(opt, conn)
-            normal.NormalStart(NAME)
+            name = input("Enter your name : ").upper()
+
+            Main.start(1)
+            normal = FileShare.Mode(opt, Main.conn)
+            normal.NormalStart(name)
 
         # INITIATING GROUP MODE
         elif opt == '2':
             while True:
 
                 # "n" INDICATES NUMBER OF CONNECTION
-                n = int(input(
-                    "Enter number of connections(minimum of 2 connections are requried to activate group chat ): "))
+                n = int(input("Enter number of connections(minimum 2 connections are required for group chat ): "))
                 if n >= 2:
                     break
                 else:
-                    print("minimum of two connections are requried")
+                    print("minimum of two connections are required")
 
-            m.start(n)
-            group = ShareZone.Mode(n, opt, conn)
+            Main.start(n)
+            group = ShareZone.Mode(n, opt, Main.conn)
             group.GroupStart()
 
         else:
@@ -59,8 +58,6 @@ class Main:
 '''=================== EXECUTES ONLY IF "main.py" IS EXECUTED AS THE FIRST FILE TO BE EXECUTED ======================'''
 
 if __name__ == "__main__":
-    # CREATING OBJECT OF CLASS "main"
-    m = Main()
 
-    # INITIATING "StartMain"
-    m.StartMain()
+    # INITIATING "StartMain" (access static-methods using class-name)
+    Main.start_main()
